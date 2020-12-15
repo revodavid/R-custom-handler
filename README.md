@@ -1,6 +1,6 @@
 # Azure Functions for R with Custom Handlers
 
-This repository demonstrates using Azure Functions and the Custom Handlers feature to create serverless services in the R language.
+This repository demonstrates using Azure Functions and the Custom Handlers feature to create serverless services in the R language, to accompany [this blog post](https://blog.revolutionanalytics.com/2020/12/azure-functions-with-r.html).
 
 ## Pre-Requisites
 
@@ -28,7 +28,7 @@ Log into Azure:
 
 `az login`
 
-Choose an Azure region to host your function. Choose a region that supports [Azure Functions Premium plan Linux](https://azure.microsoft.com/global-infrastructure/services/?products=functions&WT.mc_id=javascript-10496-davidsmi). Provide the `Name` (not the `Display Name`) as shown by `az account list-locations -o table`. Also choose a name for a resource group to contain your Function assets (you can delete this resource group after you're done to eliminate any ongoing charges).
+Choose an Azure region to host your function. Choose a region that supports [Azure Functions Premium plan Linux](https://azure.microsoft.com/global-infrastructure/services/?products=functions&WT.mc_id=javascript-10496-davidsmi). Provide the `Name` (not the `Display Name`) as shown by `az account list-locations -o table`. Also choose a name for a resource group to contain your Function assets (you can delete this resource group after you're done to eliminate all ongoing charges).
 
 ```bash
 FR_LOC="westus2"
@@ -41,11 +41,44 @@ FR_FUNCTION="rfunc0001"
 FR_STORAGE="rstrg0001"
 ```
 
-Finally, provide your Docker ID. (You can't use mine.)
+Finally, provide your Docker ID. (You can use mine and skip staight to Step ?? if you want to just use the image I've already shared.)
 
 ```bash
-DOCKER_ID="revodavid"
+FR_DOCKER="revodavid"
 ```
+
+## Build the container and test locally
+
+The provided `Dockerfile` should not require any changes, but take a look at it to see how R and R packages are installed on the container. Also note the use of `apt-get` to install system libraries required by `plumber`. You'd use similar techniques to install dependencies required by your own Functions. The Dockerfile must include the `FROM` statement to include the Azure Functions runtime in the container.
+
+To build your container, use:
+
+```bash
+docker build --tag $FR_DOCKER/accidentfunction:v1.0.0 .
+```
+
+This will take several minutes the first time you run it. Once it completes, test the container on your local machine
+
+```bash
+docker run -p 8080:80 -it $FR_DOCKER/azurefunctionsimage:v1.0.0
+```
+
+It's tricky to test the accident prediction function (it uses HTTP POST), but this repository also implements a ["hello world" Function](https://github.com/revodavid/R-custom-handler/blob/master/handler.R#L7-L12) which you can test by visiting http://localhost:8080/api/msg?msg=test . You should see something like this in the browser:
+
+```
+```
+
+Try replacing "test" with any other text and reloading to see the change.
+
+## Push the image to Docker Hub
+
+```bash
+docker login
+docker push $FR_DOCKER/accidentfunction:v1.0.0 
+```
+
+
+
 
 
 
