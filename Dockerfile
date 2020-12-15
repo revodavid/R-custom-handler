@@ -3,8 +3,16 @@ FROM mcr.microsoft.com/azure-functions/dotnet:3.0-appservice
 ENV AzureWebJobsScriptRoot=/home/site/wwwroot \
     AzureFunctionsJobHost__Logging__Console__IsEnabled=true
 
-RUN apt update && \
-    apt install -y r-base && \
-    R -e "install.packages('httpuv', repos='http://cran.rstudio.com/')"
+RUN apt-get update -qq && apt-get install -y \
+  libcurl4-openssl-dev \
+  git-core \
+  libssl-dev \
+  libsodium-dev
+
+RUN apt-get install -y r-base
+
+RUN R -e "install.packages('caret', repos='http://cran.rstudio.com/')"
+
+RUN R -e "install.packages('plumber', repos='http://cran.rstudio.com/')"
 
 COPY . /home/site/wwwroot

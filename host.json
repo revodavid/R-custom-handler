@@ -16,7 +16,7 @@
     "description": {
       "defaultExecutablePath": "Rscript",
       "workingDirectory": "",
-      "arguments": [ "handler.R" ]
+      "arguments": [ "launch-service.R" ]
     },
     "enableForwardingHttpRequest": true
   }
