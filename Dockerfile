@@ -11,8 +11,6 @@ RUN apt-get update -qq && apt-get install -y \
 
 RUN apt-get install -y r-base
 
-RUN R -e "install.packages('caret', repos='http://cran.rstudio.com/')"
-
-RUN R -e "install.packages('plumber', repos='http://cran.rstudio.com/')"
+RUN R -e "install.packages(c('caret','plumber'), repos='http://cloud.r-project.org')"
 
 COPY . /home/site/wwwroot

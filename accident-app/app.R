@@ -10,12 +10,11 @@
 library(shiny)
 library(httr)
 
-## Replace this with the endpoint for your published model.
-## You can get this from the "Endpoints" section in ml.azure.com
-## or via the R SDK with get_webservice(ws, "accident-pred")$scoring_uri
-## If you don't specify a value here, the global "accident.endpoint" object will be used
-    
-accident.endpoint <- "https://dms-accident.azurewebsites.net/api/accident"
+## Set accident.endpoint to the endpoint for your Function
+function.name <- Sys.getenv("FR_FUNCTION")
+accident.endpoint <- paste0("https://",function.name,".azurewebsites.net/api/accident")
+
+message("Using function endpoint: ", accident.endpoint)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(

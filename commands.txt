@@ -1,3 +1,19 @@
-docker build --tag revodavid/accidentfunction:v1.0.0 .
+docker build --tag $FR_DOCKER/accidentfunction:v1.0.0 .
 
 docker run -p 8080:80 -it revodavid/accidentfunction:v1.0.0 .
+
+docker push $FR_DOCKER/accidentfunction:v1.0.0 
+
+az group create --name $FR_RG --location $FR_LOC
+az storage account create --name dmsaccstorage --location westus2 --resource-group AccidentFunction-rg --sku Standard_LRS
+az functionapp plan create --resource-group AccidentFunction-rg --name myPremiumPlan --location westus2 --number-of-workers 1 --sku EP1 --is-linux
+
+az functionapp create --name dms-accident --storage-account dmsaccstorage --resource-group AccidentFunction-rg --plan myPremiumPlan --runtime custom --deployment-container-image-name revodavid/accidentfunction:v1.0.0
+storageConnectionString=$(az storage account show-connection-string --resource-group AccidentFunction-rg --name dmsaccstorage --query connectionString --output tsv)
+az functionapp config appsettings set --name dms-accident --resource-group AccidentFunction-rg --settings AzureWebJobsStorage=$storageConnectionString
+
+az functionapp update --name dms-accident --resource-group AccidentFunction-rg 
+
+az functionapp deployment container config --enable-cd --query CI_CD_URL --output tsv --name dms-accident --resource-group AccidentFunction-rg
+
+echo {\"params\":\"null\"} > call.json & curl --data @call.json "http://127.0.0.1:7071/api/accident" -H "content-type: application/json"
