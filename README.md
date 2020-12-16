@@ -59,7 +59,9 @@ This process largely follows that of ["Create a function on Linux using a custom
 
 Log into Azure:
 
-`az login`
+```bash
+az login
+```
 
 Choose an Azure region to host your function. Choose a region that supports [Azure Functions Premium plan Linux](https://azure.microsoft.com/global-infrastructure/services/?products=functions&WT.mc_id=javascript-10496-davidsmi). Provide the `Name` (not the `Display Name`) as shown by `az account list-locations -o table`. Also choose a name for a resource group to contain your Function assets (you can delete this resource group after you're done to eliminate all ongoing charges).
 
