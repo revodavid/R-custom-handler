@@ -26,7 +26,7 @@ ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       sliderInput("age",
-                  "Occupant Age:",
+                  "Occupant age:",
                   min = 16,
                   max = 95,
                   value = 16),
@@ -37,7 +37,8 @@ ui <- fluidPage(
                   "Occupant role:",
                   c("driver","pass")),
       sliderInput("yearVeh",
-                  "Vehicle Year:",
+                  "Vehicle year:",
+                  sep = "",
                   min = 1955,
                   max = 2005,
                   value = 2002),
