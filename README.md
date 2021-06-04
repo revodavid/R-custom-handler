@@ -28,7 +28,7 @@ I will show Azure CLI commands using `bash`, but you can adapt this to any shell
 cd R-custom-handler
 ```
 
-3. Launch R on your local machine, and verify that the `plumber`, `caret` and `shiny` packages are installed (or install them if needed).
+3. Launch R on your local machine, and verify that the `plumber`, `caret`, `httr` and `shiny` packages are installed (or install them if needed).
 
 ```R
 > require(caret)
@@ -37,6 +37,8 @@ Loading required package: lattice
 Loading required package: ggplot2
 > require(plumber)
 Loading required package: plumber
+> require(httr)
+Loading required package: httr
 > library(shiny)
 > q()
 ```
@@ -76,7 +78,7 @@ FR_FUNCTION="rfunc0001"
 FR_STORAGE="rstrg0001"
 ```
 
-Finally, provide your Docker ID. (You can use mine and skip staight to "Deploy to Azure" below if you want to just use the image I've already shared instead of building your own.)
+Finally, provide your Docker ID. (You can use mine and skip straight to "Deploy to Azure" below if you want to just use the image I've already shared instead of building your own.)
 
 ```bash
 FR_DOCKER="revodavid"
@@ -92,13 +94,13 @@ To build your container, use:
 docker build --tag $FR_DOCKER/accidentfunction:v1.0.0 .
 ```
 
-This will take several minutes the first time you run it. Once it completes, test the container on your local machine
+This will take several minutes the first time you run it. Once it completes, test the container on your local machine:
 
 ```bash
 docker run -p 8080:80 -it $FR_DOCKER/accidentfunction:v1.0.0
 ```
 
-It's a little tricky to test the accident prediction function (it uses HTTP POST), but this repository also implements a ["hello world" Function](blob/master/handler.R#L7-L12) which you can test by visiting http://localhost:8080/api/msg?msg=test . You should see something like this in the browser:
+It's a little tricky to test the accident prediction function (it uses HTTP POST), but this repository also implements a ["hello world" Function](blob/master/handler.R#L7-L12) which you can test by visiting http://localhost:8080/api/msg?msg=test. You should see something like this in the browser:
 
 ```
 {"msg":["The message is: 'test'"]}
@@ -131,14 +133,14 @@ az functionapp config appsettings set --name $FR_FUNCTION --resource-group $FR_R
 Once those commands complete, you're ready to test your Function in the cloud. Once again, we'll test the "hello world" function, and you can find its URL with the command below:
 
 ```
-echo https://${FR_FUNCTION}.azurewebsites.net/api/msg?msg=Function%20running
+echo https://$FR_FUNCTION.azurewebsites.net/api/msg?msg=Function%20running
 ```
 
 Visit the URL shown by that command and verify you see the `Function running` message.
 
 ## Test the Shiny application
 
-Now we're ready to call our `accident` Function from an application. The folder `accident-app` contains a Shiny application that uses our deployed `accident` function to preduct the probability of an accident given various parameters. Launch the Shiny app as follows:
+Now we're ready to call our `accident` Function from an application. The folder `accident-app` contains a Shiny application that uses our deployed `accident` function to predict the probability of an accident given various parameters. Launch the Shiny app as follows:
 
 ```bash
 cd accident-app
