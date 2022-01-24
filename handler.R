@@ -4,6 +4,10 @@
 library(plumber)
 library(jsonlite)
 
+# only load the model once to improve performance
+model_path <- "."
+model <- readRDS(file.path(model_path, "model.rds"))
+
 #* Echo back the input
 #* @param msg The message to echo
 #* @get /api/msg
@@ -14,8 +18,6 @@ function(msg="") {
 #* Predict probability of fatality from params in body
 #* @post /api/accident
 function(params) {
-  model_path <- "."
-  model <- readRDS(file.path(model_path, "model.rds"))
   method <- model$method
 
   message(paste(method, "model loaded"))
